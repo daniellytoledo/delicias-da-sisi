@@ -1,0 +1,20 @@
+# Credenciais — NUNCA versionar
+.env
+
+# Dependências
+vendor/
+node_modules/
+
+# Logs e caches
+*.log
+*.cache
+/tmp/
+
+# Ficheiros de sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp

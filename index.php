@@ -1,3 +1,20 @@
+<?php
+require_once __DIR__ . '/db.php';
+
+// Carrega prefixos do banco para o select de países
+$paises = [];
+try {
+    $pdo    = getConexao();
+    $stmt   = $pdo->query('SELECT id, nome, sigla, prefixo, bandeira FROM paises_prefixo WHERE ativo = 1 ORDER BY ordem, nome');
+    $paises = $stmt->fetchAll();
+} catch (Exception $e) {
+    // Se o banco falhar, usa lista mínima como fallback
+    $paises = [
+        ['id' => 1, 'nome' => 'Portugal',  'sigla' => 'PT', 'prefixo' => '+351', 'bandeira' => '🇵🇹'],
+        ['id' => 2, 'nome' => 'Brasil',    'sigla' => 'BR', 'prefixo' => '+55',  'bandeira' => '🇧🇷'],
+    ];
+}
+?>
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -5,6 +22,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Delícias da Sisi</title>
   <link rel="stylesheet" href="css/index.css" />
+  <link rel="stylesheet" href="css/form.css">
   <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,7 +50,6 @@
       <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
     </div>
 
-    <!-- Mobile menu -->
     <div class="mobile-nav" id="mobileNav">
       <a href="#localizacao" class="mobile-nav-link">📍 Localização</a>
       <a href="#avaliacoes" class="mobile-nav-link">⭐ Avaliações</a>
@@ -117,21 +134,143 @@
           <div class="promo-badge">🔥 Oferta</div>
           <h3>Kit Festa Completo</h3>
           <p>Salgados + bolo + docinhos + bebida. Encomende com antecedência!</p>
-          <a href="https://api.whatsapp.com/send?phone=351924272532&text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20ou%20reserva." target="_blank" class="promo-link"">Consultar preço →</a>
+          <a href="https://api.whatsapp.com/send?phone=351924272532&text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20ou%20reserva." target="_blank" class="promo-link">Consultar preço →</a>
         </div>
         <div class="promo-card promo-card--highlight">
           <div class="promo-badge">⭐ +Popular</div>
           <h3>Caixinha de Brigadeiros</h3>
           <p>Vários sabores!</p>
-          <a href="https://api.whatsapp.com/send?phone=351924272532&text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20ou%20reserva." target="_blank" class="promo-link"">Consultar preço →</a>
+          <a href="https://api.whatsapp.com/send?phone=351924272532&text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20ou%20reserva." target="_blank" class="promo-link">Consultar preço →</a>
         </div>
         <div class="promo-card">
           <div class="promo-badge">🎂 Especial</div>
           <h3>Bolo Personalizado</h3>
           <p>Bolo decorado com o tema que você quiser.</p>
-          <a href="https://api.whatsapp.com/send?phone=351924272532&text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20ou%20reserva." target="_blank" class="promo-link"">Consultar preço →</a>
+          <a href="https://api.whatsapp.com/send?phone=351924272532&text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20ou%20reserva." target="_blank" class="promo-link">Consultar preço →</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FORMULÁRIO DE INSCRIÇÃO EM PROMOÇÕES
+  ════════════════════════════════════════════════════════ -->
+  <section class="inscricao" id="inscricao">
+    <div class="container">
+      <p class="section-eyebrow section-eyebrow--brand">fique por dentro</p>
+      <h2 class="section-title">Receba as Nossas Promoções</h2>
+      <p class="inscricao-subtitulo">
+        Cadastre-se e receba ofertas exclusivas direto no seu WhatsApp ou e-mail. Prometemos não enviar spam! 🤝
+      </p>
+
+      <!-- Mensagem de feedback (escondida por padrão) -->
+      <div class="form-feedback" id="formFeedback" role="alert" aria-live="polite"></div>
+
+      <form class="inscricao-form" id="inscricaoForm" novalidate>
+
+        <!-- Nome -->
+        <div class="form-group">
+          <label for="nome" class="form-label">Nome <span class="obrigatorio">*</span></label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            class="form-input"
+            placeholder="O seu nome completo"
+            autocomplete="name"
+            maxlength="120"
+            required
+          />
+          <span class="form-error" id="erroNome"></span>
+        </div>
+
+        <!-- E-mail -->
+        <div class="form-group">
+          <label for="email" class="form-label">E-mail <span class="obrigatorio">*</span></label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-input"
+            placeholder="exemplo@email.com"
+            autocomplete="email"
+            maxlength="180"
+            required
+          />
+          <span class="form-error" id="erroEmail"></span>
+        </div>
+
+        <!-- Telefone com prefixo de país -->
+        <div class="form-group">
+          <label for="telefone" class="form-label">Telefone / WhatsApp <span class="obrigatorio">*</span></label>
+          <div class="telefone-wrapper">
+
+            <!-- Select de país / prefixo -->
+            <div class="prefixo-wrapper">
+              <select name="pais_id" id="paisId" class="prefixo-select" required aria-label="Prefixo do país">
+                <?php foreach ($paises as $p): ?>
+                  <option
+                    value="<?= htmlspecialchars($p['id']) ?>"
+                    data-prefixo="<?= htmlspecialchars($p['prefixo']) ?>"
+                    <?= ($p['sigla'] === 'PT') ? 'selected' : '' ?>
+                  >
+                    <?= htmlspecialchars($p['bandeira']) ?>
+                    <?= htmlspecialchars($p['sigla']) ?>
+                    <?= htmlspecialchars($p['prefixo']) ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <!-- Prefixo visível ao lado do input -->
+              <span class="prefixo-display" id="prefixoDisplay">🇵🇹 +351</span>
+            </div>
+
+            <input
+              type="tel"
+              id="telefone"
+              name="telefone"
+              class="form-input telefone-input"
+              placeholder="924 272 532"
+              autocomplete="tel-national"
+              maxlength="15"
+              required
+            />
+          </div>
+          <span class="form-error" id="erroTelefone"></span>
+        </div>
+
+        <!-- Canais desejados -->
+        <div class="form-group form-group--canais">
+          <label class="form-label">Quero receber por: <span class="obrigatorio">*</span></label>
+          <div class="canais-wrapper">
+            <label class="canal-option">
+              <input type="checkbox" name="canal_whatsapp" value="1" checked />
+              <span class="canal-box">
+                <span class="canal-icon">💬</span>
+                <span class="canal-nome">WhatsApp</span>
+              </span>
+            </label>
+            <label class="canal-option">
+              <input type="checkbox" name="canal_email" value="1" checked />
+              <span class="canal-box">
+                <span class="canal-icon">✉️</span>
+                <span class="canal-nome">E-mail</span>
+              </span>
+            </label>
+          </div>
+          <span class="form-error" id="erroCanal"></span>
+        </div>
+
+        <!-- Botão -->
+        <button type="submit" class="btn btn-primary btn-form" id="btnEnviar">
+          <span id="btnTexto">🎉 Quero Receber Promoções!</span>
+          <span id="btnLoader" class="btn-loader" hidden>Enviando…</span>
+        </button>
+
+        <p class="form-aviso">
+          🔒 Os seus dados estão seguros e nunca serão partilhados com terceiros.
+        </p>
+
+      </form>
     </div>
   </section>
 
@@ -148,7 +287,7 @@
         </div>
         <div class="review-card">
           <div class="review-stars">★★★★★</div>
-          <p class="review-text">"I came across this little place by chance on Google, and what a wonderful discovery it turned out to be! The owners were incredibly welcoming and made the whole experience even more enjoyable from the moment I walked in. The food was absolutely delicious and incredibly fresh — every bite felt like a trip straight to Brazil. I truly appreciated the warm atmosphere, as well as the kindness and friendliness of the owner, which made the evening even more special. I will definitely be coming back whenever I can. Highly recommended!"</p>
+          <p class="review-text">"I came across this little place by chance on Google, and what a wonderful discovery it turned out to be! The owners were incredibly welcoming and made the whole experience even more enjoyable from the moment I walked in. The food was absolutely delicious and incredibly fresh — every bite felt like a trip straight to Brazil."</p>
           <span class="review-author">— Carolina</span>
         </div>
         <div class="review-card">
@@ -212,6 +351,7 @@
         <a href="https://www.instagram.com/deliciasdasisipt/" target="_blank">Instagram</a>
         <a href="tel:+351924272532">Contacto</a>
         <a href="#promocoes">Promoções</a>
+        <a href="#inscricao">Newsletter</a>
       </div>
       <p class="footer-copy">© 2025 Delícias da Sisi. Todos os direitos reservados.</p>
     </div>
