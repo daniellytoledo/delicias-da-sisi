@@ -24,7 +24,7 @@ class ApiEndpointTest extends TestCase
         parent::setUp();
 
         $base = $_ENV['APP_URL'] ?? 'http://localhost:8000';
-        $this->apiUrl = rtrim($base, '/') . '../../salvar_cliente.php';
+        $this->apiUrl = rtrim($base, '/') . '/salvar_cliente.php';
 
         // Verifica se o servidor está a correr
         $ctx = @stream_context_create(['http' => ['timeout' => 2]]);

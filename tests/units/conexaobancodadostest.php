@@ -18,7 +18,7 @@ class ConexaoBancoDadosTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->envPath = PROJECT_ROOT . '../../.env';
+        $this->envPath = PROJECT_ROOT . '/.env';
     }
 
     // ── Testa existência do .env ─────────────────────────────
@@ -53,7 +53,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function arquivoEnvNaoEstaNoGit(): void
     {
-        $gitignorePath = PROJECT_ROOT . '../../.gitignore';
+        $gitignorePath = PROJECT_ROOT . '/.gitignore';
 
         if (!file_exists($gitignorePath)) {
             $this->markTestSkipped('.gitignore não encontrado.');
@@ -74,7 +74,7 @@ class ConexaoBancoDadosTest extends TestCase
     public function getConexaoRetornaInstanciaPDO(): void
     {
         // Carrega db.php com as variáveis de teste já definidas no bootstrap
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo = getConexao();
 
@@ -88,7 +88,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function getConexaoRetornaAMesmaInstancia(): void
     {
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo1 = getConexao();
         $pdo2 = getConexao();
@@ -103,7 +103,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function conexaoUsaCharsetUtf8mb4(): void
     {
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo     = getConexao();
         $charset = $pdo->query("SELECT @@character_set_client")->fetchColumn();
@@ -133,7 +133,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function tabelaClientesExiste(): void
     {
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo = getConexao();
 
@@ -148,7 +148,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function tabelaPaisesExiste(): void
     {
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo    = getConexao();
         $result = $pdo->query("SHOW TABLES LIKE 'paises_prefixo'")->fetchAll();
@@ -162,7 +162,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function tabelaPaisesTEMRegistos(): void
     {
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo   = getConexao();
         $total = (int) $pdo->query('SELECT COUNT(*) FROM paises_prefixo')->fetchColumn();
@@ -177,7 +177,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function paisPortugalEstaNosBanco(): void
     {
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo  = getConexao();
         $stmt = $pdo->prepare("SELECT * FROM paises_prefixo WHERE sigla = 'PT'");
@@ -191,7 +191,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function paisBrasilEstaNosBanco(): void
     {
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo  = getConexao();
         $stmt = $pdo->prepare("SELECT * FROM paises_prefixo WHERE sigla = 'BR'");
@@ -207,7 +207,7 @@ class ConexaoBancoDadosTest extends TestCase
     #[Test]
     public function tabelaClientesTemTodasAsColunasNecessarias(): void
     {
-        require_once PROJECT_ROOT . '../../db.php';
+        require_once PROJECT_ROOT . '/db.php';
 
         $pdo     = getConexao();
         $colunas = $pdo->query('DESCRIBE clientes_promocoes')->fetchAll(PDO::FETCH_COLUMN);

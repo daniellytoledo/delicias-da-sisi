@@ -5,7 +5,7 @@
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
-         bootstrap="tests/bootstrap.php"
+         bootstrap="bootstrap.php"
          colors="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
          displayDetailsOnTestsThatTriggerErrors="true"
@@ -14,10 +14,10 @@
 
   <testsuites>
     <testsuite name="Unit">
-      <directory>tests/Unit</directory>
+      <directory>units</directory>
     </testsuite>
     <testsuite name="Integration">
-      <directory>tests/Integration</directory>
+      <directory>integration</directory>
     </testsuite>
   </testsuites>
 

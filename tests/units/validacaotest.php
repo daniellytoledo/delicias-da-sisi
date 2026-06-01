@@ -174,7 +174,7 @@ class ValidacaoTest extends TestCase
     {
         $this->assertSame('924272532', $this->limparTelefone('924 272 532'));
         $this->assertSame('11912345678', $this->limparTelefone('(11) 91234-5678'));
-        $this->assertSame('912345678', $this->limparTelefone('+351 912 345 678'));
+        $this->assertSame('351912345678', $this->limparTelefone('+351 912 345 678'));
     }
 
     #[Test]

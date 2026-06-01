@@ -26,7 +26,7 @@ define('PROJECT_ROOT', dirname(__DIR__));
 // NÃO contém senhas — apenas registra as classes do PHPUnit
 // para que o PHP saiba onde encontrá-las automaticamente.
 // Se ainda não rodou "composer install", faça isso primeiro.
-$autoload = PROJECT_ROOT . '../../vendor/autoload.php';
+$autoload = PROJECT_ROOT . '/vendor/autoload.php';
 if (!file_exists($autoload)) {
     die(
         "\n[ERRO] vendor/autoload.php não encontrado.\n" .
@@ -40,4 +40,4 @@ require_once $autoload;
 // Os testes usam as variáveis definidas no phpunit.xml,
 // que sobrepõem o .env e apontam para o banco de TESTE
 // (delicias_sisi_test), não o banco de produção.
-require_once PROJECT_ROOT . '../../db.php';
+require_once PROJECT_ROOT . '/db.php';

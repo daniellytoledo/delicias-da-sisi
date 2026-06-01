@@ -53,9 +53,9 @@ class CadastroClienteTest extends TestCase
         $this->assertSame('joao@exemplo.pt',  $cliente['email']);
         $this->assertSame('11912345678',      $cliente['telefone']);
         $this->assertSame('+5511912345678',   $cliente['telefone_full']);
-        $this->assertSame('1',                $cliente['canal_whatsapp']);
-        $this->assertSame('0',                $cliente['canal_email']);
-        $this->assertSame('1',                $cliente['ativo']);
+        $this->assertEquals(1, $cliente['canal_whatsapp']);
+        $this->assertEquals(0, $cliente['canal_email']);
+        $this->assertEquals(1, $cliente['ativo']);
     }
 
     #[Test]
@@ -143,8 +143,8 @@ class CadastroClienteTest extends TestCase
 
         $cliente = $this->buscarPorEmail('upsert@email.pt');
         $this->assertSame('Nome Atualizado', $cliente['nome']);
-        $this->assertSame('0', $cliente['canal_whatsapp']);
-        $this->assertSame('1', $cliente['canal_email']);
+        $this->assertEquals(0, $cliente['canal_whatsapp']);
+        $this->assertEquals(1, $cliente['canal_email']);
     }
 
     // ═══════════════════════════════════════════════════════
